@@ -70,13 +70,6 @@ docker run -it --rm wetfeet2000/choctaw_hog:1.0.10 --help
 - Clone this repo, and then run `cargo build --release`. The binaries are located in `target/release`.
 - To build and view HTML documents, run ```cargo doc --no-deps --open```.
 - To run unit tests, run ```cargo test```.
-- To cross-compile Berkshire Hog for the AWS Lambda environment, run the following commands and upload berkshire_lambda.zip to
-your AWS Lambda dashboard:
-```shell script
-docker run --rm -it -v "$(pwd)":/home/rust/src ekidd/rust-musl-builder cargo build --release
-cp target/x86_64-unknown-linux-musl/release/berkshire_hog bootstrap
-zip -j berkshire_lambda.zip bootstrap
-```
 
 ## How to build on Windows
 You will need to compile static OpenSSL binaries and tell Rust/Cargo where to find them:
@@ -94,6 +87,30 @@ $env:OPENSSL_STATIC = 'Yes'
 [System.Environment]::SetEnvironmentVariable('OPENSSL_STATIC', $env:OPENSSL_STATIC, [System.EnvironmentVariableTarget]::User)
 ```
 You can now follow the main build instructions listed above.
+
+## Cross-Compiling Berkshire Hog for AWS Lambda
+
+### macOS
+
+`brew install FiloSottile/musl-cross/musl-cross rpm2cpio`
+
+And then `./build_lambda_macos.sh`
+
+Note that we do pull Amazon kernel headers for 4.14. You can adjust this with the `AMAZON_KERNEL_HEADERS_RPM_URL` environment variable.
+
+We also pull OpenSSL 3.0.12. You can adjust this with the `OPENSSL_BUILD_VER` environment variable.
+
+### Linux
+
+With `cross` installed, `./build_lambda.sh` should be sufficient -- or if you want to build the zip file yourself, `cross build --release --target x86_64-unknown-linux-musl` and looking in the right target/.../release directory should be sufficient. 
+
+```shell script
+docker run --rm -it -v "$(pwd)":/home/rust/src ekidd/rust-musl-builder cargo build --release
+cp target/x86_64-unknown-linux-musl/release/berkshire_hog bootstrap
+zip -j berkshire_lambda.zip bootstrap
+```
+
+# Commands
 
 ## Anakamali Hog (GDoc Scanner) usage
 ```
