@@ -5,7 +5,7 @@ FROM ${CROSS_BASE_IMAGE}
 ARG OPENSSL_BUILD_VER=3.0.12
 RUN cd /usr/local/src/ && curl -sLO https://www.openssl.org/source/openssl-${OPENSSL_BUILD_VER}.tar.gz && \
     tar xzvf openssl-${OPENSSL_BUILD_VER}.tar.gz && cd openssl-${OPENSSL_BUILD_VER} && \
-    CROSS_COMPILE="x86_64-linux-musl-" ./Configure linux-x86_64 && make
+    CROSS_COMPILE="x86_64-linux-musl-" ./Configure linux-x86_64 && make && make install
 
 # OpenSSL stuff is now in /usr/local/src/openssl-$OPENSSL_BUILD_VER
 ENV OPENSSL_DIR=/usr/local/src/openssl-${OPENSSL_BUILD_VER}
